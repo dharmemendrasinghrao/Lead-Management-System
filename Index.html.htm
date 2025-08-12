@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Advanced Lead Management System</title>
+    <style>
+        /* CSS Variables for Theme Management */
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #6b7280;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            
+            --bg-primary: rgba(255, 255, 255, 0.1);
+            --bg-secondary: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.6);
+            
+            --border-radius: 12px;
+            --border-radius-large: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Glassmorphism Container */
+        .app-container {
+            max-width: 1400px;
+            margin: 20px auto;
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-large);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            backdrop-filter: blur(15px);
+            padding: 24px 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .last-updated {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .refresh-btn {
+            background: var(--bg-secondary);
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .refresh-btn:hover {
+            background: var(--bg-primary);
+            transform: rotate(180deg);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 16px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-bottom-color: var(--success-color);
+        }
+
+        .badge {
+            background: var(--danger-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        .badge.warning {
+            background: var(--warning-color);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 32px;
+            min-height: 600px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--bg-primary);
+            backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 28px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .metric-icon {
+            font-size: 32px;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            flex-shrink: 0;
+        }
+
+        .metric-info h3 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-info p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color), var(--info-color));
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #6366f1);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Data Tables */
+        .data-table-container {
+            background: var(--bg-primary);
+            backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 800px;
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .data-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-new { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .status-assigned { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .status-completed { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-available { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-unavailable { background: rgba(107, 114, 128, 0.2); color: #6b7280; }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 24px 32px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--text-primary);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close {
+            color: var(--text-muted);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: var(--transition);
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 24px 32px 32px;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            padding: 16px 24px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: var(--transition);
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--info-color);
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Analytics Cards */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .analytics-card {
+            background: var(--bg-primary);
+            backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .analytics-card h3 {
+            color: var(--text-primary);
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-container {
+                margin: 10px;
+                border-radius: var(--border-radius);
+            }
+
+            .header {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .nav-tabs {
+                overflow-x: auto;
+            }
+
+            .tab-btn {
+                min-width: 100px;
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .metric-card {
+                padding: 20px;
+            }
+
+            .metric-info h3 {
+                font-size: 28px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .section-controls {
+                width: 100%;
+            }
+
+            .data-table {
+                min-width: 600px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 16px 20px;
+            }
+        }
+
+        /* Keyboard Shortcuts Indicator */
+        .keyboard-shortcuts {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            color: var(--text-muted);
+            z-index: 1000;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .keyboard-shortcuts.show {
+            opacity: 1;
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .counter-animation {
+            animation: countUp 1s ease;
+        }
+
+        @keyframes countUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Bulk Text Processor Styles */
+        .bulk-processor {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .bulk-processor h4 {
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .bulk-textarea {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            color: var(--text-primary);
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+
+        .bulk-textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .bulk-example {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🚀 Advanced Lead Management System</h1>
+            <div class="header-controls">
+                <span class="last-updated">Last updated: <span id="lastUpdated">--</span></span>
+                <button class="refresh-btn" onclick="refreshDashboard()" title="Refresh (Ctrl+R)">🔄</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('dashboard')" title="Dashboard (Ctrl+1)">
+                📊 Dashboard
+            </button>
+            <button class="tab-btn" onclick="showTab('leads')" title="Leads (Ctrl+2)">
+                📝 Leads
+                <span class="badge" id="leadsBadge">0</span>
+            </button>
+            <button class="tab-btn" onclick="showTab('team')" title="Team (Ctrl+3)">
+                👥 Team
+            </button>
+            <button class="tab-btn" onclick="showTab('tasks')" title="Tasks (Ctrl+4)">
+                ✅ Tasks
+                <span class="badge warning" id="tasksBadge">0</span>
+            </button>
+            <button class="tab-btn" onclick="showTab('analytics')" title="Analytics (Ctrl+5)">
+                📈 Analytics
+            </button>
+        </nav>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="metrics-grid">
+                <div class="metric-card fade-in">
+                    <div class="metric-icon">📝</div>
+                    <div class="metric-info">
+                        <h3 id="totalLeads" class="counter-animation">0</h3>
+                        <p>Total Leads</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="leadsProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-icon">👥</div>
+                    <div class="metric-info">
+                        <h3 id="totalTeam" class="counter-animation">0</h3>
+                        <p>Team Members</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="teamProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-icon">✅</div>
+                    <div class="metric-info">
+                        <h3 id="totalTasks" class="counter-animation">0</h3>
+                        <p>Active Tasks</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="tasksProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-icon">📈</div>
+                    <div class="metric-info">
+                        <h3 id="conversionRate" class="counter-animation">0%</h3>
+                        <p>Conversion Rate</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="conversionProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-icon">🎯</div>
+                    <div class="metric-info">
+                        <h3 id="availableTeam" class="counter-animation">0</h3>
+                        <p>Available Team</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="availableProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card fade-in">
+                    <div class="metric-icon">🏆</div>
+                    <div class="metric-info">
+                        <h3 id="topPerformer" class="counter-animation">-</h3>
+                        <p>Top Performer</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="performerProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>📊 Performance Overview</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Today's Leads</span>
+                        <span class="stat-value" id="todayLeads">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Completed Tasks</span>
+                        <span class="stat-value" id="completedTasks">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Success Rate</span>
+                        <span class="stat-value" id="successRate">0%</span>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <h3>📈 Team Statistics</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Average Tasks/Member</span>
+                        <span class="stat-value" id="avgTasks">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Response Time</span>
+                        <span class="stat-value" id="responseTime">-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Workload Balance</span>
+                        <span class="stat-value" id="workloadBalance">Good</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leads Tab -->
+        <div id="leads" class="tab-content">
+            <div class="section-header">
+                <h2>📝 Lead Management</h2>
+                <div class="section-controls">
+                    <button class="btn btn-secondary" onclick="generateSampleLeads()">🎲 Sample Data</button>
+                    <button class="btn btn-secondary" onclick="exportData('leads')">💾 Export</button>
+                    <button class="btn btn-primary" onclick="showAddLeadModal()">➕ Add Lead</button>
+                </div>
+            </div>
+
+            <!-- Bulk Text Processor -->
+            <div class="bulk-processor">
+                <h4>🤖 Intelligent Bulk Text Processor</h4>
+                <textarea class="bulk-textarea" id="bulkTextInput" 
+                    placeholder="Paste multiple leads here. Each line will be intelligently parsed.
+Example:
+John Smith 9876543210 Mumbai Need new POS system
+Sarah Johnson sarah@email.com 8765432109 Delhi Looking for inventory management
+Mike Brown +91-7654321098 Bangalore Urgent CRM requirement"></textarea>
+                <div style="display: flex; gap: 12px; margin-top: 12px;">
+                    <button class="btn btn-success" onclick="processBulkText()">🚀 Process & Add All</button>
+                    <button class="btn btn-secondary" onclick="clearBulkText()">🗑️ Clear</button>
+                </div>
+                <div class="bulk-example">
+                    <strong>Smart Parsing Features:</strong><br>
+                    • Automatically detects names, phone numbers, emails<br>
+                    • Recognizes Indian cities and states<br>
+                    • Extracts requirements and notes<br>
+                    • Handles various phone formats (+91, spaces, dashes)
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterLeads('all')">All Leads</button>
+                <button class="filter-btn" onclick="filterLeads('new')">New</button>
+                <button class="filter-btn" onclick="filterLeads('assigned')">Assigned</button>
+                <button class="filter-btn" onclick="filterLeads('completed')">Completed</button>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Location</th>
+                                <th>Requirement</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadsTableBody">
+                            <tr>
+                                <td colspan="8" class="empty-state">
+                                    <div class="empty-state-icon">📝</div>
+                                    <h3>No leads yet</h3>
+                                    <p>Add your first lead or use the bulk processor to get started</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Tab -->
+        <div id="team" class="tab-content">
+            <div class="section-header">
+                <h2>👥 Team Management</h2>
+                <div class="section-controls">
+                    <button class="btn btn-secondary" onclick="generateSampleTeam()">🎲 Sample Team</button>
+                    <button class="btn btn-secondary" onclick="exportData('team')">💾 Export</button>
+                    <button class="btn btn-primary" onclick="showAddTeamModal()">➕ Add Member</button>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Active Tasks</th>
+                                <th>Completed</th>
+                                <th>Success Rate</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teamTableBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-state-icon">👥</div>
+                                    <h3>No team members yet</h3>
+                                    <p>Add team members to start assigning leads</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Tab -->
+        <div id="tasks" class="tab-content">
+            <div class="section-header">
+                <h2>✅ Task Management</h2>
+                <div class="section-controls">
+                    <button class="btn btn-secondary" onclick="exportData('tasks')">💾 Export</button>
+                    <button class="btn btn-warning" onclick="markAllCompleted()">✅ Complete All</button>
+                </div>
+            </div>
+
+            <!-- Task Filters -->
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterTasks('all')">All Tasks</button>
+                <button class="filter-btn" onclick="filterTasks('pending')">Pending</button>
+                <button class="filter-btn" onclick="filterTasks('completed')">Completed</button>
+            </div>
+
+            <div class="data-table-container">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Lead Name</th>
+                                <th>Phone</th>
+                                <th>Requirement</th>
+                                <th>Assigned To</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksTableBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">
+                                    <div class="empty-state-icon">✅</div>
+                                    <h3>No tasks yet</h3>
+                                    <p>Tasks will appear here when leads are assigned to team members</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="section-header">
+                <h2>📈 Analytics & Insights</h2>
+                <div class="section-controls">
+                    <button class="btn btn-secondary" onclick="exportData('analytics')">💾 Export Report</button>
+                    <button class="btn btn-primary" onclick="refreshAnalytics()">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>📊 Lead Sources</h3>
+                    <div id="leadSources">
+                        <div class="stat-item">
+                            <span class="stat-label">Direct Entry</span>
+                            <span class="stat-value" id="directLeads">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Bulk Import</span>
+                            <span class="stat-value" id="bulkLeads">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sample Data</span>
+                            <span class="stat-value" id="sampleLeads">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>🎯 Conversion Funnel</h3>
+                    <div id="conversionFunnel">
+                        <div class="stat-item">
+                            <span class="stat-label">New Leads</span>
+                            <span class="stat-value" id="newLeadsCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Assigned</span>
+                            <span class="stat-value" id="assignedLeadsCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Completed</span>
+                            <span class="stat-value" id="completedLeadsCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>👥 Team Performance</h3>
+                    <div id="teamPerformance">
+                        <div class="stat-item">
+                            <span class="stat-label">Most Active</span>
+                            <span class="stat-value" id="mostActive">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Highest Success Rate</span>
+                            <span class="stat-value" id="highestSuccess">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Workload Balance</span>
+                            <span class="stat-value" id="workloadStatus">Good</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>📅 Time Analysis</h3>
+                    <div id="timeAnalysis">
+                        <div class="stat-item">
+                            <span class="stat-label">Avg. Response Time</span>
+                            <span class="stat-value" id="avgResponseTime">< 1 hour</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Peak Hours</span>
+                            <span class="stat-value" id="peakHours">9 AM - 5 PM</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Resolution Time</span>
+                            <span class="stat-value" id="resolutionTime">Same day</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Lead Modal -->
+    <div id="addLeadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>➕ Add New Lead</h3>
+                <span class="close" onclick="closeModal('addLeadModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addLeadForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leadName">Full Name *</label>
+                            <input type="text" id="leadName" required placeholder="John Smith">
+                        </div>
+                        <div class="form-group">
+                            <label for="leadPhone">Phone Number *</label>
+                            <input type="tel" id="leadPhone" required placeholder="9876543210">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leadEmail">Email (Optional)</label>
+                            <input type="email" id="leadEmail" placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="leadLocation">Location</label>
+                            <input type="text" id="leadLocation" placeholder="Mumbai, Delhi, Bangalore...">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="leadRequirement">Requirement/Notes</label>
+                        <textarea id="leadRequirement" rows="3" placeholder="POS system, CRM software, inventory management..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('addLeadModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Lead</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Team Member Modal -->
+    <div id="addTeamModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👥 Add Team Member</h3>
+                <span class="close" onclick="closeModal('addTeamModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addTeamForm">
+                    <div class="form-group">
+                        <label for="teamName">Full Name *</label>
+                        <input type="text" id="teamName" required placeholder="Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="teamEmail">Email *</label>
+                        <input type="email" id="teamEmail" required placeholder="jane@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="teamRole">Role (Optional)</label>
+                        <input type="text" id="teamRole" placeholder="Sales Executive, Account Manager...">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('addTeamModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Member</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Data Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📁 Import Data</h3>
+                <span class="close" onclick="closeModal('importModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="importFile">Select JSON File</label>
+                    <input type="file" id="importFile" accept=".json" onchange="handleFileImport(event)">
+                </div>
+                <div class="form-group">
+                    <label for="importText">Or Paste JSON Data</label>
+                    <textarea id="importText" rows="10" placeholder="Paste your JSON data here..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('importModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="importData()">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Keyboard Shortcuts Info -->
+    <div id="keyboardShortcuts" class="keyboard-shortcuts">
+        <strong>Shortcuts:</strong> Ctrl+1-5 (Tabs), Ctrl+R (Refresh), Esc (Close Modals)
+    </div>
+
+    <script>
+        // Application State
+        let leads = JSON.parse(localStorage.getItem('leads')) || [];
+        let team = JSON.parse(localStorage.getItem('team')) || [];
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let currentFilter = 'all';
+        let currentTab = 'dashboard';
+
+        // Indian Cities for Smart Recognition
+        const indianCities = [
+            'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad',
+            'Jaipur', 'Lucknow', 'Kanpur', 'Nagpur', 'Indore', 'Thane', 'Bhopal', 'Visakhapatnam',
+            'Patna', 'Vadodara', 'Ghaziabad', 'Ludhiana', 'Agra', 'Nashik', 'Faridabad', 'Meerut',
+            'Rajkot', 'Kalyan', 'Vasai', 'Varanasi', 'Srinagar', 'Aurangabad', 'Dhanbad', 'Amritsar',
+            'Navi Mumbai', 'Allahabad', 'Ranchi', 'Howrah', 'Coimbatore', 'Jabalpur', 'Gwalior'
+        ];
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupKeyboardShortcuts();
+            showTab('dashboard');
+            
+            // Show keyboard shortcuts briefly
+            setTimeout(() => {
+                document.getElementById('keyboardShortcuts').classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('keyboardShortcuts').classList.remove('show');
+                }, 3000);
+            }, 1000);
+        });
+
+        function initializeApp() {
+            // Load sample data if none exists
+            if (leads.length === 0 && team.length === 0) {
+                generateSampleData();
+            }
+            
+            updateDashboard();
+            updateAllTables();
+            startAutoRefresh();
+        }
+
+        // Dashboard Functions
+        function updateDashboard() {
+            const stats = calculateStats();
+            
+            // Animate counters
+            animateCounter('totalLeads', stats.totalLeads);
+            animateCounter('totalTeam', stats.totalTeam);
+            animateCounter('totalTasks', stats.activeTasks);
+            animateCounter('conversionRate', stats.conversionRate, '%');
+            animateCounter('availableTeam', stats.availableTeam);
+            
+            // Update progress bars
+            updateProgressBar('leadsProgress', (stats.totalLeads / 100) * 100);
+            updateProgressBar('teamProgress', (stats.availableTeam / stats.totalTeam) * 100);
+            updateProgressBar('tasksProgress', (stats.activeTasks / stats.totalLeads) * 100);
+            updateProgressBar('conversionProgress', stats.conversionRate);
+            updateProgressBar('availableProgress', (stats.availableTeam / stats.totalTeam) * 100);
+            
+            // Update badges
+            document.getElementById('leadsBadge').textContent = stats.totalLeads;
+            document.getElementById('tasksBadge').textContent = stats.activeTasks;
+            
+            // Update additional stats
+            document.getElementById('todayLeads').textContent = stats.todayLeads;
+            document.getElementById('completedTasks').textContent = stats.completedTasks;
+            document.getElementById('successRate').textContent = stats.conversionRate + '%';
+            document.getElementById('topPerformer').textContent = stats.topPerformer || '-';
+            document.getElementById('avgTasks').textContent = stats.avgTasks;
+            document.getElementById('responseTime').textContent = '< 1 hour';
+            document.getElementById('workloadBalance').textContent = stats.workloadBalance;
+            
+            // Update last updated time
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+        }
+
+        function calculateStats() {
+            const today = new Date().toDateString();
+            const availableTeam = team.filter(member => member.status === 'available').length;
+            const activeTasks = tasks.filter(task => task.status === 'pending').length;
+            const completedTasks = tasks.filter(task => task.status === 'completed').length;
+            const todayLeads = leads.filter(lead => new Date(lead.createdAt).toDateString() === today).length;
+            const completedLeads = leads.filter(lead => lead.status === 'completed').length;
+            const conversionRate = leads.length > 0 ? Math.round((completedLeads / leads.length) * 100) : 0;
+            
+            // Calculate top performer
+            const teamStats = {};
+            tasks.forEach(task => {
+                if (task.assignedTo) {
+                    if (!teamStats[task.assignedTo]) {
+                        teamStats[task.assignedTo] = { total: 0, completed: 0 };
+                    }
+                    teamStats[task.assignedTo].total++;
+                    if (task.status === 'completed') {
+                        teamStats[task.assignedTo].completed++;
+                    }
+                }
+            });
+            
+            let topPerformer = null;
+            let bestRate = 0;
+            Object.keys(teamStats).forEach(name => {
+                const rate = teamStats[name].total > 0 ? (teamStats[name].completed / teamStats[name].total) * 100 : 0;
+                if (rate > bestRate && teamStats[name].total >= 3) {
+                    bestRate = rate;
+                    topPerformer = name;
+                }
+            });
+            
+            const avgTasks = team.length > 0 ? Math.round(tasks.length / team.length) : 0;
+            const workloadBalance = getWorkloadBalance();
+            
+            return {
+                totalLeads: leads.length,
+                totalTeam: team.length,
+                availableTeam: availableTeam,
+                activeTasks: activeTasks,
+                completedTasks: completedTasks,
+                todayLeads: todayLeads,
+                conversionRate: conversionRate,
+                topPerformer: topPerformer,
+                avgTasks: avgTasks,
+                workloadBalance: workloadBalance
+            };
+        }
+
+        function getWorkloadBalance() {
+            if (team.length === 0) return 'N/A';
+            
+            const taskCounts = team.map(member => {
+                return tasks.filter(task => task.assignedTo === member.name && task.status === 'pending').length;
+            });
+            
+            const max = Math.max(...taskCounts);
+            const min = Math.min(...taskCounts);
+            const difference = max - min;
+            
+            if (difference <= 1) return 'Excellent';
+            if (difference <= 2) return 'Good';
+            if (difference <= 3) return 'Fair';
+            return 'Needs Balance';
+        }
+
+        function animateCounter(elementId, targetValue, suffix = '') {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = Date.now();
+            
+            function updateCounter() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                element.textContent = currentValue + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            updateCounter();
+        }
+
+        function updateProgressBar(elementId, percentage) {
+            const element = document.getElementById(elementId);
+            setTimeout(() => {
+                element.style.width = Math.min(percentage, 100) + '%';
+            }, 300);
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            
+            currentTab = tabName;
+            
+            // Update data based on tab
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'analytics') {
+                updateAnalytics();
+            }
+        }
+
+        // Lead Management
+        function showAddLeadModal() {
+            document.getElementById('addLeadModal').style.display = 'block';
+            document.getElementById('leadName').focus();
+        }
+
+        function processBulkText() {
+            const bulkText = document.getElementById('bulkTextInput').value.trim();
+            if (!bulkText) {
+                showToast('Please enter some text to process', 'warning');
+                return;
+            }
+            
+            const lines = bulkText.split('\n').filter(line => line.trim());
+            let processed = 0;
+            let skipped = 0;
+            
+            lines.forEach(line => {
+                const parsedLead = parseLeadFromText(line);
+                if (parsedLead.name && parsedLead.phone) {
+                    // Check for duplicates
+                    const isDuplicate = leads.some(lead => 
+                        cleanPhone(lead.phone) === cleanPhone(parsedLead.phone)
+                    );
+                    
+                    if (!isDuplicate) {
+                        addLeadToSystem(parsedLead, 'bulk');
+                        processed++;
+                    } else {
+                        skipped++;
+                    }
+                } else {
+                    skipped++;
+                }
+            });
+            
+            clearBulkText();
+            showToast(`Processed ${processed} leads, skipped ${skipped} duplicates/invalid entries`, 'success');
+            updateDashboard();
+            updateAllTables();
+        }
+
+        function parseLeadFromText(text) {
+            // Initialize lead object
+            const lead = {
+                name: '',
+                phone: '',
+                email: '',
+                location: '',
+                requirement: ''
+            };
+            
+            // Extract phone number (various formats)
+            const phoneRegex = /(\+91[\s-]?)?[6-9]\d{9}|\d{10}/g;
+            const phoneMatch = text.match(phoneRegex);
+            if (phoneMatch) {
+                lead.phone = phoneMatch[0];
+                text = text.replace(phoneMatch[0], '').trim();
+            }
+            
+            // Extract email
+            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+            const emailMatch = text.match(emailRegex);
+            if (emailMatch) {
+                lead.email = emailMatch[0];
+                text = text.replace(emailMatch[0], '').trim();
+            }
+            
+            // Extract Indian city
+            let foundCity = '';
+            indianCities.forEach(city => {
+                if (text.toLowerCase().includes(city.toLowerCase())) {
+                    lead.location = city;
+                    foundCity = city;
+                    text = text.replace(new RegExp(city, 'gi'), '').trim();
+                }
+            });
+            
+            // Extract name (assume first 1-3 words are name)
+            const words = text.split(' ').filter(word => word.length > 0);
+            if (words.length >= 2) {
+                lead.name = words.slice(0, 2).join(' ');
+                lead.requirement = words.slice(2).join(' ');
+            } else if (words.length === 1) {
+                lead.name = words[0];
+            }
+            
+            return lead;
+        }
+
+        function addLeadToSystem(leadData, source = 'manual') {
+            const lead = {
+                id: generateId(),
+                name: leadData.name,
+                phone: leadData.phone,
+                email: leadData.email || '',
+                location: leadData.location || '',
+                requirement: leadData.requirement || '',
+                status: 'new',
+                assignedTo: '',
+                createdAt: new Date().toISOString(),
+                source: source
+            };
+            
+            leads.push(lead);
+            saveData();
+            
+            // Auto-assign if team members available
+            autoAssignLead(lead);
+        }
+
+        function autoAssignLead(lead) {
+            const availableMembers = team.filter(member => member.status === 'available');
+            if (availableMembers.length === 0) return;
+            
+            // Round-robin assignment (find member with least tasks)
+            let assignee = availableMembers[0];
+            let minTasks = tasks.filter(task => task.assignedTo === assignee.name && task.status === 'pending').length;
+            
+            availableMembers.forEach(member => {
+                const taskCount = tasks.filter(task => task.assignedTo === member.name && task.status === 'pending').length;
+                if (taskCount < minTasks) {
+                    minTasks = taskCount;
+                    assignee = member;
+                }
+            });
+            
+            // Update lead
+            lead.status = 'assigned';
+            lead.assignedTo = assignee.name;
+            
+            // Create task
+            const task = {
+                id: generateId(),
+                leadId: lead.id,
+                leadName: lead.name,
+                phone: lead.phone,
+                requirement: lead.requirement,
+                assignedTo: assignee.name,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.push(task);
+            saveData();
+        }
+
+        function cleanPhone(phone) {
+            return phone.replace(/[\s\-\+]/g, '').replace(/^91/, '');
+        }
+
+        function clearBulkText() {
+            document.getElementById('bulkTextInput').value = '';
+        }
+
+        // Team Management
+        function showAddTeamModal() {
+            document.getElementById('addTeamModal').style.display = 'block';
+            document.getElementById('teamName').focus();
+        }
+
+        function toggleTeamStatus(memberId) {
+            const member = team.find(m => m.id === memberId);
+            if (member) {
+                member.status = member.status === 'available' ? 'unavailable' : 'available';
+                saveData();
+                updateAllTables();
+                updateDashboard();
+                showToast(`${member.name} is now ${member.status}`, 'info');
+            }
+        }
+
+        function removeTeamMember(memberId) {
+            if (confirm('Are you sure you want to remove this team member?')) {
+                team = team.filter(m => m.id !== memberId);
+                // Reassign their tasks
+                tasks.forEach(task => {
+                    if (task.assignedTo === team.find(m => m.id === memberId)?.name) {
+                        task.assignedTo = '';
+                        // Find lead and update
+                        const lead = leads.find(l => l.id === task.leadId);
+                        if (lead) {
+                            lead.status = 'new';
+                            lead.assignedTo = '';
+                        }
+                    }
+                });
+                saveData();
+                updateAllTables();
+                updateDashboard();
+                showToast('Team member removed', 'info');
+            }
+        }
+
+        // Task Management
+        function completeTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = 'completed';
+                task.completedAt = new Date().toISOString();
+                
+                // Update lead status
+                const lead = leads.find(l => l.id === task.leadId);
+                if (lead) {
+                    lead.status = 'completed';
+                }
+                
+                saveData();
+                updateAllTables();
+                updateDashboard();
+                showToast(`Task completed for ${task.leadName}`, 'success');
+            }
+        }
+
+        function markAllCompleted() {
+            if (confirm('Are you sure you want to mark all pending tasks as completed?')) {
+                const pendingTasks = tasks.filter(task => task.status === 'pending');
+                pendingTasks.forEach(task => {
+                    task.status = 'completed';
+                    task.completedAt = new Date().toISOString();
+                    
+                    // Update lead status
+                    const lead = leads.find(l => l.id === task.leadId);
+                    if (lead) {
+                        lead.status = 'completed';
+                    }
+                });
+                
+                saveData();
+                updateAllTables();
+                updateDashboard();
+                showToast(`${pendingTasks.length} tasks marked as completed`, 'success');
+            }
+        }
+
+        // Filter Functions
+        function filterLeads(status) {
+            document.querySelectorAll('.filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            currentFilter = status;
+            updateLeadsTable();
+        }
+
+        function filterTasks(status) {
+            document.querySelectorAll('.filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            updateTasksTable(status);
+        }
+
+        // Table Update Functions
+        function updateAllTables() {
+            updateLeadsTable();
+            updateTeamTable();
+            updateTasksTable();
+        }
+
+        function updateLeadsTable() {
+            const tbody = document.getElementById('leadsTableBody');
+            let filteredLeads = leads;
+            
+            if (currentFilter !== 'all') {
+                filteredLeads = leads.filter(lead => lead.status === currentFilter);
+            }
+            
+            if (filteredLeads.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <div class="empty-state-icon">📝</div>
+                            <h3>No leads found</h3>
+                            <p>Try adjusting your filters or add some leads</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = filteredLeads.map(lead => `
+                <tr class="fade-in">
+                    <td><strong>${lead.name}</strong>${lead.email ? '<br><small style="color: var(--text-muted);">' + lead.email + '</small>' : ''}</td>
+                    <td><a href="tel:${lead.phone}">${lead.phone}</a></td>
+                    <td>${lead.location || '-'}</td>
+                    <td>${lead.requirement || '-'}</td>
+                    <td><span class="status-badge status-${lead.status}">${lead.status}</span></td>
+                    <td>${lead.assignedTo || '-'}</td>
+                    <td><small>${new Date(lead.createdAt).toLocaleDateString()}</small></td>
+                    <td>
+                        <button class="btn btn-danger" onclick="removeLead('${lead.id}')" title="Remove">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateTeamTable() {
+            const tbody = document.getElementById('teamTableBody');
+            
+            if (team.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <h3>No team members yet</h3>
+                            <p>Add team members to start assigning leads</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = team.map(member => {
+                const activeTasks = tasks.filter(task => task.assignedTo === member.name && task.status === 'pending').length;
+                const completedTasks = tasks.filter(task => task.assignedTo === member.name && task.status === 'completed').length;
+                const totalTasks = activeTasks + completedTasks;
+                const successRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                
+                return `
+                    <tr class="fade-in">
+                        <td><strong>${member.name}</strong>${member.role ? '<br><small style="color: var(--text-muted);">' + member.role + '</small>' : ''}</td>
+                        <td><a href="mailto:${member.email}">${member.email}</a></td>
+                        <td><span class="status-badge status-${member.status}">${member.status}</span></td>
+                        <td><strong>${activeTasks}</strong></td>
+                        <td>${completedTasks}</td>
+                        <td>${successRate}%</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="toggleTeamStatus('${member.id}')" title="Toggle Status">
+                                ${member.status === 'available' ? '⏸️' : '▶️'}
+                            </button>
+                            <button class="btn btn-danger" onclick="removeTeamMember('${member.id}')" title="Remove">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateTasksTable(filter = 'all') {
+            const tbody = document.getElementById('tasksTableBody');
+            let filteredTasks = tasks;
+            
+            if (filter !== 'all') {
+                filteredTasks = tasks.filter(task => task.status === filter);
+            }
+            
+            if (filteredTasks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div class="empty-state-icon">✅</div>
+                            <h3>No tasks found</h3>
+                            <p>Tasks will appear here when leads are assigned to team members</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = filteredTasks.map(task => `
+                <tr class="fade-in">
+                    <td><strong>${task.leadName}</strong></td>
+                    <td><a href="tel:${task.phone}">${task.phone}</a></td>
+                    <td>${task.requirement || '-'}</td>
+                    <td>${task.assignedTo}</td>
+                    <td><span class="status-badge status-${task.status}">${task.status}</span></td>
+                    <td><small>${new Date(task.createdAt).toLocaleDateString()}</small></td>
+                    <td>
+                        ${task.status === 'pending' ? 
+                            `<button class="btn btn-success" onclick="completeTask('${task.id}')" title="Complete Task">✅</button>` :
+                            '<span style="color: var(--success-color);">✅ Done</span>'
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Analytics Functions
+        function updateAnalytics() {
+            // Lead Sources
+            const directLeads = leads.filter(lead => lead.source === 'manual').length;
+            const bulkLeads = leads.filter(lead => lead.source === 'bulk').length;
+            const sampleLeads = leads.filter(lead => lead.source === 'sample').length;
+            
+            document.getElementById('directLeads').textContent = directLeads;
+            document.getElementById('bulkLeads').textContent = bulkLeads;
+            document.getElementById('sampleLeads').textContent = sampleLeads;
+            
+            // Conversion Funnel
+            const newLeadsCount = leads.filter(lead => lead.status === 'new').length;
+            const assignedLeadsCount = leads.filter(lead => lead.status === 'assigned').length;
+            const completedLeadsCount = leads.filter(lead => lead.status === 'completed').length;
+            
+            document.getElementById('newLeadsCount').textContent = newLeadsCount;
+            document.getElementById('assignedLeadsCount').textContent = assignedLeadsCount;
+            document.getElementById('completedLeadsCount').textContent = completedLeadsCount;
+            
+            // Team Performance
+            if (team.length > 0) {
+                const teamStats = {};
+                tasks.forEach(task => {
+                    if (task.assignedTo) {
+                        if (!teamStats[task.assignedTo]) {
+                            teamStats[task.assignedTo] = { total: 0, completed: 0 };
+                        }
+                        teamStats[task.assignedTo].total++;
+                        if (task.status === 'completed') {
+                            teamStats[task.assignedTo].completed++;
+                        }
+                    }
+                });
+                
+                let mostActive = '';
+                let maxTasks = 0;
+                let highestSuccess = '';
+                let bestRate = 0;
+                
+                Object.keys(teamStats).forEach(name => {
+                    if (teamStats[name].total > maxTasks) {
+                        maxTasks = teamStats[name].total;
+                        mostActive = name;
+                    }
+                    
+                    const rate = teamStats[name].total > 0 ? (teamStats[name].completed / teamStats[name].total) * 100 : 0;
+                    if (rate > bestRate && teamStats[name].total >= 2) {
+                        bestRate = rate;
+                        highestSuccess = name;
+                    }
+                });
+                
+                document.getElementById('mostActive').textContent = mostActive || '-';
+                document.getElementById('highestSuccess').textContent = highestSuccess || '-';
+            }
+            
+            document.getElementById('workloadStatus').textContent = getWorkloadBalance();
+        }
+
+        function refreshAnalytics() {
+            updateAnalytics();
+            showToast('Analytics refreshed', 'success');
+        }
+
+        // Form Handlers
+        document.getElementById('addLeadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const leadData = {
+                name: document.getElementById('leadName').value.trim(),
+                phone: document.getElementById('leadPhone').value.trim(),
+                email: document.getElementById('leadEmail').value.trim(),
+                location: document.getElementById('leadLocation').value.trim(),
+                requirement: document.getElementById('leadRequirement').value.trim()
+            };
+            
+            if (!leadData.name || !leadData.phone) {
+                showToast('Name and phone are required', 'error');
+                return;
+            }
+            
+            // Check for duplicates
+            const isDuplicate = leads.some(lead => 
+                cleanPhone(lead.phone) === cleanPhone(leadData.phone)
+            );
+            
+            if (isDuplicate) {
+                showToast('Lead with this phone number already exists', 'warning');
+                return;
+            }
+            
+            addLeadToSystem(leadData, 'manual');
+            closeModal('addLeadModal');
+            document.getElementById('addLeadForm').reset();
+            updateDashboard();
+            updateAllTables();
+            showToast('Lead added successfully', 'success');
+        });
+
+        document.getElementById('addTeamForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const memberData = {
+                name: document.getElementById('teamName').value.trim(),
+                email: document.getElementById('teamEmail').value.trim(),
+                role: document.getElementById('teamRole').value.trim()
+            };
+            
+            if (!memberData.name || !memberData.email) {
+                showToast('Name and email are required', 'error');
+                return;
+            }
+            
+            // Check for duplicates
+            const isDuplicate = team.some(member => 
+                member.email.toLowerCase() === memberData.email.toLowerCase()
+            );
+            
+            if (isDuplicate) {
+                showToast('Team member with this email already exists', 'warning');
+                return;
+            }
+            
+            const member = {
+                id: generateId(),
+                name: memberData.name,
+                email: memberData.email,
+                role: memberData.role,
+                status: 'available',
+                createdAt: new Date().toISOString()
+            };
+            
+            team.push(member);
+            saveData();
+            closeModal('addTeamModal');
+            document.getElementById('addTeamForm').reset();
+            updateDashboard();
+            updateAllTables();
+            showToast('Team member added successfully', 'success');
+        });
+
+        // Sample Data Generation
+        function generateSampleData() {
+            generateSampleLeads();
+            generateSampleTeam();
+        }
+
+        function generateSampleLeads() {
+            const sampleLeads = [
+                { name: 'Rajesh Kumar', phone: '9876543210', location: 'Mumbai', requirement: 'POS system for retail store', email: 'rajesh@example.com' },
+                { name: 'Priya Sharma', phone: '8765432109', location: 'Delhi', requirement: 'Inventory management software', email: 'priya@company.com' },
+                { name: 'Amit Patel', phone: '7654321098', location: 'Bangalore', requirement: 'CRM solution for real estate', email: '' },
+                { name: 'Sneha Gupta', phone: '6543210987', location: 'Chennai', requirement: 'Accounting software', email: 'sneha@business.com' },
+                { name: 'Vikram Singh', phone: '9876543211', location: 'Pune', requirement: 'E-commerce platform setup', email: 'vikram@shop.com' },
+                { name: 'Anita Reddy', phone: '8765432108', location: 'Hyderabad', requirement: 'HR management system', email: '' },
+                { name: 'Ravi Agarwal', phone: '7654321097', location: 'Kolkata', requirement: 'Digital marketing tools', email: 'ravi@marketing.com' },
+                { name: 'Deepika Jain', phone: '6543210986', location: 'Jaipur', requirement: 'Restaurant billing software', email: 'deepika@restaurant.com' }
+            ];
+            
+            sampleLeads.forEach(leadData => {
+                if (!leads.some(lead => cleanPhone(lead.phone) === cleanPhone(leadData.phone))) {
+                    addLeadToSystem(leadData, 'sample');
+                }
+            });
+            
+            saveData();
+            updateDashboard();
+            updateAllTables();
+            showToast('Sample leads generated', 'success');
+        }
+
+        function generateSampleTeam() {
+            const sampleTeam = [
+                { name: 'Sarah Johnson', email: 'sarah@company.com', role: 'Sales Executive' },
+                { name: 'Mike Chen', email: 'mike@company.com', role: 'Account Manager' },
+                { name: 'Lisa Rodriguez', email: 'lisa@company.com', role: 'Business Development' },
+                { name: 'David Kumar', email: 'david@company.com', role: 'Sales Specialist' }
+            ];
+            
+            sampleTeam.forEach(memberData => {
+                if (!team.some(member => member.email.toLowerCase() === memberData.email.toLowerCase())) {
+                    const member = {
+                        id: generateId(),
+                        name: memberData.name,
+                        email: memberData.email,
+                        role: memberData.role,
+                        status: 'available',
+                        createdAt: new Date().toISOString()
+                    };
+                    team.push(member);
+                }
+            });
+            
+            saveData();
+            updateDashboard();
+            updateAllTables();
+            showToast('Sample team generated', 'success');
+        }
+
+        // Data Management
+        function saveData() {
+            localStorage.setItem('leads', JSON.stringify(leads));
+            localStorage.setItem('team', JSON.stringify(team));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function exportData(type = 'all') {
+            let data = {};
+            let filename = 'lead_management_';
+            
+            switch(type) {
+                case 'leads':
+                    data = { leads };
+                    filename += 'leads';
+                    break;
+                case 'team':
+                    data = { team };
+                    filename += 'team';
+                    break;
+                case 'tasks':
+                    data = { tasks };
+                    filename += 'tasks';
+                    break;
+                case 'analytics':
+                    data = {
+                        stats: calculateStats(),
+                        leadsByStatus: {
+                            new: leads.filter(l => l.status === 'new').length,
+                            assigned: leads.filter(l => l.status === 'assigned').length,
+                            completed: leads.filter(l => l.status === 'completed').length
+                        },
+                        tasksByStatus: {
+                            pending: tasks.filter(t => t.status === 'pending').length,
+                            completed: tasks.filter(t => t.status === 'completed').length
+                        }
+                    };
+                    filename += 'analytics';
+                    break;
+                default:
+                    data = { leads, team, tasks };
+                    filename += 'complete';
+            }
+            
+            filename += '_' + new Date().toISOString().split('T')[0] + '.json';
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Data exported successfully', 'success');
+        }
+
+        function showImportModal() {
+            document.getElementById('importModal').style.display = 'block';
+        }
+
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('importText').value = e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function importData() {
+            try {
+                const jsonText = document.getElementById('importText').value.trim();
+                if (!jsonText) {
+                    showToast('Please provide JSON data to import', 'warning');
+                    return;
+                }
+                
+                const data = JSON.parse(jsonText);
+                
+                if (data.leads) {
+                    leads = data.leads;
+                }
+                if (data.team) {
+                    team = data.team;
+                }
+                if (data.tasks) {
+                    tasks = data.tasks;
+                }
+                
+                saveData();
+                closeModal('importModal');
+                document.getElementById('importText').value = '';
+                document.getElementById('importFile').value = '';
+                updateDashboard();
+                updateAllTables();
+                showToast('Data imported successfully', 'success');
+            } catch (error) {
+                showToast('Invalid JSON format', 'error');
+            }
+        }
+
+        // Remove Functions
+        function removeLead(leadId) {
+            if (confirm('Are you sure you want to remove this lead?')) {
+                leads = leads.filter(lead => lead.id !== leadId);
+                tasks = tasks.filter(task => task.leadId !== leadId);
+                saveData();
+                updateDashboard();
+                updateAllTables();
+                showToast('Lead removed', 'info');
+            }
+        }
+
+        // Utility Functions
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function refreshDashboard() {
+            updateDashboard();
+            updateAllTables();
+            showToast('Dashboard refreshed', 'success');
+        }
+
+        function startAutoRefresh() {
+            setInterval(() => {
+                if (currentTab === 'dashboard') {
+                    updateDashboard();
+                }
+            }, 30000); // 30 seconds
+        }
+
+        // Keyboard Shortcuts
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Number keys for tabs
+                if (e.ctrlKey && !e.shiftKey && !e.altKey) {
+                    switch(e.key) {
+                        case '1':
+                            e.preventDefault();
+                            showTab('dashboard');
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            showTab('leads');
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            showTab('team');
+                            break;
+                        case '4':
+                            e.preventDefault();
+                            showTab('tasks');
+                            break;
+                        case '5':
+                            e.preventDefault();
+                            showTab('analytics');
+                            break;
+                        case 'r':
+                            e.preventDefault();
+                            refreshDashboard();
+                            break;
+                    }
+                }
+                
+                // ESC to close modals
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                }
+            });
+        }
+
+        // Click outside modal to close
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
